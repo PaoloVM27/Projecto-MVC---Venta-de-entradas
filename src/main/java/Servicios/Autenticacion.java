@@ -55,16 +55,17 @@ public class Autenticacion {
         personas = nuevo;
     }
 
-    public boolean registrarCliente(String nombres, String apellidos, String dni, String contrasena) {
+    public boolean registrarCliente(String nombres, String apellidos, String dni, String correo, String contrasena) {
         if (nombres == null || nombres.isEmpty()) return false;
         if (apellidos == null || apellidos.isEmpty()) return false;
         if (dni == null || dni.isEmpty()) return false;
+        if (correo == null || correo.isEmpty()) return false;
         if (contrasena == null || contrasena.isEmpty()) return false;
         if (buscarClientePorDni(dni) != null) return false;
         if (buscarUsuarioPorDni(dni) != null) return false;
 
         if (numPersonas >= personas.length) redimensionar();
-        Cliente nuevoCliente = new Cliente(nombres, apellidos, dni, contrasena);
+        Cliente nuevoCliente = new Cliente(nombres, apellidos, dni, correo, contrasena);
         personas[numPersonas++] = nuevoCliente;
 
         boolean guardado = guardarClientes();

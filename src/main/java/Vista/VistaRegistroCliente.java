@@ -44,6 +44,8 @@ public class VistaRegistroCliente extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -58,10 +60,10 @@ public class VistaRegistroCliente extends javax.swing.JFrame {
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 110, 37, -1));
 
         jLabel5.setText("Contraseña:");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, -1, -1));
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 250, -1, -1));
 
         jLabel6.setText("Confirmar contraseña:");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, -1, -1));
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 290, -1, -1));
         getContentPane().add(txtNombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 110, 180, -1));
 
         txtApellidos.addActionListener(new java.awt.event.ActionListener() {
@@ -84,8 +86,8 @@ public class VistaRegistroCliente extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 350, 100, 30));
-        getContentPane().add(txtContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 220, 180, -1));
-        getContentPane().add(txtConfirmarContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 260, 180, -1));
+        getContentPane().add(txtContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 250, 180, -1));
+        getContentPane().add(txtConfirmarContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 290, 180, -1));
 
         jPanel1.setBackground(new java.awt.Color(0, 51, 102));
 
@@ -119,7 +121,7 @@ public class VistaRegistroCliente extends javax.swing.JFrame {
                 jCheckBox1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 220, -1, -1));
+        getContentPane().add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 250, -1, -1));
 
         jLabel7.setText("Fecha de Nacimiento:");
         getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 140, -1, -1));
@@ -127,6 +129,10 @@ public class VistaRegistroCliente extends javax.swing.JFrame {
 
         jLabel8.setText("(dd/mm/aaaa)");
         getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 160, -1, -1));
+
+        jLabel9.setText("Correo:");
+        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 200, 50, -1));
+        getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 200, 180, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -191,8 +197,10 @@ public class VistaRegistroCliente extends javax.swing.JFrame {
     public javax.swing.JLabel jLabel6;
     public javax.swing.JLabel jLabel7;
     public javax.swing.JLabel jLabel8;
+    public javax.swing.JLabel jLabel9;
     public javax.swing.JPanel jPanel1;
     public javax.swing.JTextField jTextField1;
+    public javax.swing.JTextField jTextField2;
     public javax.swing.JTextField txtApellidos;
     public javax.swing.JPasswordField txtConfirmarContrasena;
     public javax.swing.JPasswordField txtContrasena;

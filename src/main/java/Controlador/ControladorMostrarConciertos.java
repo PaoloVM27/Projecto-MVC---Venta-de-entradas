@@ -37,6 +37,13 @@ public class ControladorMostrarConciertos {
             btnEliminar.addActionListener(e -> eliminarConcierto());
         }
 
+        javax.swing.JButton btnEliminarZona = obtenerBtnEliminarZona();
+        if (btnEliminarZona == null) {
+            btnEliminarZona = new javax.swing.JButton("Eliminar Zona");
+            vista.getContentPane().add(btnEliminarZona, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 400, 140, 30));
+        }
+        btnEliminarZona.addActionListener(e -> eliminarZona());
+
         javax.swing.JButton btnGuardar = obtenerBtnGuardar();
         if (btnGuardar != null) {
             btnGuardar.addActionListener(e -> guardarZona());
@@ -117,6 +124,7 @@ public class ControladorMostrarConciertos {
             this.conciertoSeleccionado = null;
             limpiarCamposConcierto();
             limpiarCamposZona();
+            mostrarDescuentos();
             cargarTablaZonas();
             return;
         }
@@ -136,11 +144,13 @@ public class ControladorMostrarConciertos {
                 txtFecha.setEditable(false);
             }
 
+            mostrarDescuentos();
             cargarTablaZonas();
             limpiarCamposZona();
         } else {
             limpiarCamposConcierto();
             limpiarCamposZona();
+            mostrarDescuentos();
             cargarTablaZonas();
         }
     }
@@ -335,6 +345,48 @@ public class ControladorMostrarConciertos {
         }
     }
 
+    private void eliminarZona() {
+        if (conciertoSeleccionado == null) {
+            JOptionPane.showMessageDialog(vista, "No hay ningún concierto seleccionado.");
+            return;
+        }
+
+        if (zonaSeleccionada == null) {
+            JOptionPane.showMessageDialog(vista, "Selecciona una zona de la tabla para eliminar.");
+            return;
+        }
+
+        int opcion = JOptionPane.showConfirmDialog(
+                vista,
+                "¿Estás seguro de eliminar esta zona?",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (opcion != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        boolean eliminada = conciertoSeleccionado.eliminarZona(zonaSeleccionada.getNombre());
+        if (eliminada) {
+            boolean guardado = arregloConcierto.guardarConciertos();
+            if (guardado) {
+                JOptionPane.showMessageDialog(vista, "Zona eliminada correctamente.");
+
+                javax.swing.JTable tabla = obtenerTablaZonas();
+                if (tabla != null) {
+                    tabla.clearSelection();
+                }
+                limpiarCamposZona();
+                cargarTablaZonas();
+            } else {
+                JOptionPane.showMessageDialog(vista, "No se pudo guardar la modificación.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(vista, "No se pudo eliminar la zona.");
+        }
+    }
+
     private void volver() {
         vista.dispose();
 
@@ -360,7 +412,6 @@ public class ControladorMostrarConciertos {
         if (txtCapacidad != null) txtCapacidad.setText("");
     }
 
-    // Resolutores dinámicos por reflexión y tipo de componentes
     private javax.swing.JComboBox<String> obtenerComboConciertos() {
         for (java.awt.Component comp : vista.getContentPane().getComponents()) {
             if (comp instanceof javax.swing.JComboBox) {
@@ -460,13 +511,31 @@ public class ControladorMostrarConciertos {
         for (java.awt.Component comp : vista.getContentPane().getComponents()) {
             if (comp instanceof javax.swing.JButton) {
                 javax.swing.JButton btn = (javax.swing.JButton) comp;
-                if (btn.getText() != null && btn.getText().toLowerCase().contains("eliminar")) {
+                if (btn.getText() != null && btn.getText().toLowerCase().contains("eliminar") && !btn.getText().toLowerCase().contains("zona")) {
                     return btn;
                 }
             }
         }
         try {
             java.lang.reflect.Field field = vista.getClass().getDeclaredField("jButton2");
+            field.setAccessible(true);
+            return (javax.swing.JButton) field.get(vista);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private javax.swing.JButton obtenerBtnEliminarZona() {
+        for (java.awt.Component comp : vista.getContentPane().getComponents()) {
+            if (comp instanceof javax.swing.JButton) {
+                javax.swing.JButton btn = (javax.swing.JButton) comp;
+                if (btn.getText() != null && btn.getText().toLowerCase().contains("eliminar") && btn.getText().toLowerCase().contains("zona")) {
+                    return btn;
+                }
+            }
+        }
+        try {
+            java.lang.reflect.Field field = vista.getClass().getDeclaredField("jButton4");
             field.setAccessible(true);
             return (javax.swing.JButton) field.get(vista);
         } catch (Exception ex) {
@@ -490,5 +559,78 @@ public class ControladorMostrarConciertos {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    private void mostrarDescuentos() {
+        javax.swing.JTextField txtVisa = obtenerTxtDescuento("Visa", "jTextField6", "txtVisa");
+        javax.swing.JTextField txtMaster = obtenerTxtDescuento("Master", "jTextField7", "txtMaster");
+        javax.swing.JTextField txtAmex = obtenerTxtDescuento("American", "jTextField8", "txtAmex");
+        javax.swing.JTextField txtDiners = obtenerTxtDescuento("Diners", "jTextField9", "txtDiners");
+        
+        if (txtVisa != null) { txtVisa.setText(""); txtVisa.setEditable(false); }
+        if (txtMaster != null) { txtMaster.setText(""); txtMaster.setEditable(false); }
+        if (txtAmex != null) { txtAmex.setText(""); txtAmex.setEditable(false); }
+        if (txtDiners != null) { txtDiners.setText(""); txtDiners.setEditable(false); }
+
+        if (conciertoSeleccionado != null) {
+            double descVisa = conciertoSeleccionado.getDescuentoVisa();
+            double descMaster = conciertoSeleccionado.getDescuentoMasterCard();
+            double descAmex = conciertoSeleccionado.getDescuentoAmericanExpress();
+            double descDiners = conciertoSeleccionado.getDescuentoDinersClub();
+
+            if (txtVisa != null) txtVisa.setText((descVisa % 1 == 0 ? (int)descVisa : descVisa) + "%");
+            if (txtMaster != null) txtMaster.setText((descMaster % 1 == 0 ? (int)descMaster : descMaster) + "%");
+            if (txtAmex != null) txtAmex.setText((descAmex % 1 == 0 ? (int)descAmex : descAmex) + "%");
+            if (txtDiners != null) txtDiners.setText((descDiners % 1 == 0 ? (int)descDiners : descDiners) + "%");
+        }
+    }
+
+    private javax.swing.JTextField obtenerTxtDescuento(String labelText, String fallbackName, String fallbackName2) {
+        try {
+            java.awt.Component[] components = vista.getContentPane().getComponents();
+            javax.swing.JLabel targetLabel = null;
+            for (java.awt.Component comp : components) {
+                if (comp instanceof javax.swing.JLabel) {
+                    javax.swing.JLabel lbl = (javax.swing.JLabel) comp;
+                    if (lbl.getText() != null && lbl.getText().toLowerCase().contains(labelText.toLowerCase())) {
+                        targetLabel = lbl;
+                        break;
+                    }
+                }
+            }
+            if (targetLabel != null) {
+                javax.swing.JTextField closestText = null;
+                int minDistance = Integer.MAX_VALUE;
+                for (java.awt.Component comp : components) {
+                    if (comp instanceof javax.swing.JTextField) {
+                        int diffY = Math.abs(comp.getY() - targetLabel.getY());
+                        if (diffY < 20 && comp.getX() > targetLabel.getX()) {
+                            int dist = comp.getX() - targetLabel.getX();
+                            if (dist < minDistance) {
+                                minDistance = dist;
+                                closestText = (javax.swing.JTextField) comp;
+                            }
+                        }
+                    }
+                }
+                if (closestText != null) {
+                    return closestText;
+                }
+            }
+        } catch (Exception ex) {}
+
+        try {
+            java.lang.reflect.Field field = vista.getClass().getDeclaredField(fallbackName);
+            field.setAccessible(true);
+            return (javax.swing.JTextField) field.get(vista);
+        } catch (Exception ex) {}
+
+        try {
+            java.lang.reflect.Field field = vista.getClass().getDeclaredField(fallbackName2);
+            field.setAccessible(true);
+            return (javax.swing.JTextField) field.get(vista);
+        } catch (Exception ex) {}
+
+        return null;
     }
 }

@@ -8,6 +8,7 @@ public class Cliente extends Persona implements java.io.Serializable {
     private Tarjeta[] tarjetas;
     private int numTarjetas;
     private boolean estado;
+    private String correo;
 
     public Cliente() {
         super();
@@ -15,14 +16,16 @@ public class Cliente extends Persona implements java.io.Serializable {
         this.tarjetas = new Tarjeta[10];
         this.numTarjetas = 0;
         this.estado = true;
+        this.correo = "";
     }
 
-    public Cliente(String nombres, String apellidos, String dni, String contrasena) {
+    public Cliente(String nombres, String apellidos, String dni, String correo, String contrasena) {
         super(nombres, apellidos, dni, contrasena);
         this.puntos = 0;
         this.tarjetas = new Tarjeta[10];
         this.numTarjetas = 0;
         this.estado = true;
+        this.correo = correo;
     }
 
     public boolean ingresar(String usuario, String clave) {
@@ -153,5 +156,13 @@ public class Cliente extends Persona implements java.io.Serializable {
 
     public int getNumTarjetas() {
         return numTarjetas;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 }

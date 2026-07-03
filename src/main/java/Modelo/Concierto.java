@@ -11,6 +11,11 @@ public class Concierto implements java.io.Serializable {
     
     private Venta[] ventas;
     private int numVentas;
+    
+    private double descuentoVisa;
+    private double descuentoMasterCard;
+    private double descuentoAmericanExpress;
+    private double descuentoDinersClub;
 
     public Concierto() {
         this.nombre = "";
@@ -19,6 +24,10 @@ public class Concierto implements java.io.Serializable {
         this.numZonas = 0;
         this.ventas = new Venta[10];
         this.numVentas = 0;
+        this.descuentoVisa = 0.0;
+        this.descuentoMasterCard = 0.0;
+        this.descuentoAmericanExpress = 0.0;
+        this.descuentoDinersClub = 0.0;
     }
 
     public Concierto(String nombre, Date fecha) {
@@ -28,6 +37,10 @@ public class Concierto implements java.io.Serializable {
         this.numZonas = 0;
         this.ventas = new Venta[10];
         this.numVentas = 0;
+        this.descuentoVisa = 0.0;
+        this.descuentoMasterCard = 0.0;
+        this.descuentoAmericanExpress = 0.0;
+        this.descuentoDinersClub = 0.0;
     }
 
     public boolean agregarZona(String nombre, int capacidad, double precio) {
@@ -170,5 +183,37 @@ public class Concierto implements java.io.Serializable {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public double getDescuentoVisa() {
+        return descuentoVisa;
+    }
+
+    public void setDescuentoVisa(double descuentoVisa) {
+        this.descuentoVisa = descuentoVisa;
+    }
+
+    public double getDescuentoMasterCard() {
+        return descuentoMasterCard;
+    }
+
+    public void setDescuentoMasterCard(double descuentoMasterCard) {
+        this.descuentoMasterCard = descuentoMasterCard;
+    }
+
+    public double getDescuentoAmericanExpress() {
+        return descuentoAmericanExpress;
+    }
+
+    public void setDescuentoAmericanExpress(double descuentoAmericanExpress) {
+        this.descuentoAmericanExpress = descuentoAmericanExpress;
+    }
+
+    public double getDescuentoDinersClub() {
+        return descuentoDinersClub;
+    }
+
+    public void setDescuentoDinersClub(double descuentoDinersClub) {
+        this.descuentoDinersClub = descuentoDinersClub;
     }
 }

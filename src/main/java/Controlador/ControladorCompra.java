@@ -130,6 +130,7 @@ public class ControladorCompra {
                 }
             }
         }
+        calcularMonto();
     }
 
     private String enmascararNumero(String numStr) {
@@ -180,7 +181,36 @@ public class ControladorCompra {
         }
 
         int cantidad = Integer.parseInt(vistaCompra.spnCantidad.getValue().toString());
-        double monto = arregloVentas.calcularMonto(zona, cantidad);
+        
+        double descuento = 0.0;
+        try {
+            javax.swing.JComboBox<String> combo = obtenerComboBoxTarjetas();
+            if (combo != null && combo.getSelectedIndex() != -1) {
+                String tarjetaTexto = combo.getSelectedItem().toString().toLowerCase();
+                if (tarjetaTexto.contains("visa")) descuento = concierto.getDescuentoVisa();
+                else if (tarjetaTexto.contains("master")) descuento = concierto.getDescuentoMasterCard();
+                else if (tarjetaTexto.contains("american") || tarjetaTexto.contains("express")) descuento = concierto.getDescuentoAmericanExpress();
+                else if (tarjetaTexto.contains("diners")) descuento = concierto.getDescuentoDinersClub();
+            }
+        } catch (Exception e) {}
+        
+        double descuentoPuntos = 0.0;
+        Cliente cliente = auth.getClienteActual();
+        if (cliente != null && cliente.getPuntos() >= 10) {
+            descuentoPuntos = 5.0;
+        }
+        
+        double descuentoTotal = descuento + descuentoPuntos;
+        
+        double originalPrecio = zona.getPrecio();
+        double precioDescuento = originalPrecio - (originalPrecio * (descuentoTotal / 100.0));
+        double monto = precioDescuento * cantidad;
+        
+        javax.swing.JTextField txtDesc = obtenerTxtDescuentoCompra();
+        if (txtDesc != null) {
+            txtDesc.setText((descuentoTotal % 1 == 0 ? String.valueOf((int)descuentoTotal) : String.valueOf(descuentoTotal)));
+            txtDesc.setEditable(false);
+        }
 
         vistaCompra.lblMonto.setText("Monto: S/ " + monto);
 
@@ -189,7 +219,15 @@ public class ControladorCompra {
         resumen += "Concierto: " + concierto.getNombre() + "\n";
         resumen += "Fecha: " + sdf.format(concierto.getFecha()) + "\n";
         resumen += "Zona seleccionada: " + zona.getNombre() + "\n";
-        resumen += "Precio por entrada: S/ " + zona.getPrecio() + "\n";
+        resumen += "Precio original: S/ " + originalPrecio + "\n";
+        if (descuentoPuntos > 0) {
+            resumen += "Descuento por tarjeta: " + (descuento % 1 == 0 ? (int)descuento : descuento) + "%\n";
+            resumen += "Descuento por puntos (10 pts): " + (descuentoPuntos % 1 == 0 ? (int)descuentoPuntos : descuentoPuntos) + "%\n";
+            resumen += "Descuento total: " + (descuentoTotal % 1 == 0 ? (int)descuentoTotal : descuentoTotal) + "%\n";
+        } else {
+            resumen += "Descuento: " + (descuentoTotal % 1 == 0 ? (int)descuentoTotal : descuentoTotal) + "%\n";
+        }
+        resumen += "Precio por entrada: S/ " + precioDescuento + "\n";
         resumen += "Cantidad: " + cantidad + "\n";
         resumen += "Monto total: S/ " + monto + "\n";
         resumen += "Entradas disponibles: " + zona.contarDisponibles() + "\n";
@@ -241,14 +279,56 @@ public class ControladorCompra {
 
             int cantidad = Integer.parseInt(vistaCompra.spnCantidad.getValue().toString());
 
+            double descuento = 0.0;
+            try {
+                if (combo != null && combo.getSelectedIndex() != -1) {
+                    String tarjetaTexto = combo.getSelectedItem().toString().toLowerCase();
+                    if (tarjetaTexto.contains("visa")) descuento = concierto.getDescuentoVisa();
+                    else if (tarjetaTexto.contains("master")) descuento = concierto.getDescuentoMasterCard();
+                    else if (tarjetaTexto.contains("american") || tarjetaTexto.contains("express")) descuento = concierto.getDescuentoAmericanExpress();
+                    else if (tarjetaTexto.contains("diners")) descuento = concierto.getDescuentoDinersClub();
+                }
+            } catch (Exception e) {}
+            
+            double descuentoPuntos = 0.0;
+            if (cliente != null && cliente.getPuntos() >= 10) {
+                descuentoPuntos = 5.0;
+            }
+            
+            double descuentoTotal = descuento + descuentoPuntos;
+            
+            double originalPrecio = zona.getPrecio();
+            double precioDescuento = originalPrecio - (originalPrecio * (descuentoTotal / 100.0));
+            
+            try {
+                java.lang.reflect.Field fieldPrecio = zona.getClass().getDeclaredField("precio");
+                fieldPrecio.setAccessible(true);
+                fieldPrecio.set(zona, precioDescuento);
+            } catch (Exception ex) {}
+
             Venta venta = arregloVentas.comprarEntradas(
                     cliente,
                     concierto,
                     zona,
                     cantidad
             );
+            
+            try {
+                java.lang.reflect.Field fieldPrecio = zona.getClass().getDeclaredField("precio");
+                fieldPrecio.setAccessible(true);
+                fieldPrecio.set(zona, originalPrecio);
+            } catch (Exception ex) {}
 
             arregloConcierto.guardarConciertos();
+            
+            if (descuentoPuntos > 0) {
+                cliente.setPuntos(cliente.getPuntos() - 10);
+                try {
+                    java.lang.reflect.Method mGuardar = arregloCliente.getClass().getDeclaredMethod("guardarCambios");
+                    mGuardar.setAccessible(true);
+                    mGuardar.invoke(arregloCliente);
+                } catch (Exception ex) {}
+            }
 
             Tarjeta tarjeta = cliente.getTarjeta();
 
@@ -264,7 +344,17 @@ public class ControladorCompra {
             resumen += "Concierto: " + venta.getNombreConcierto() + "\n";
             resumen += "Zona: " + venta.getNombreZona() + "\n";
             resumen += "Cantidad de entradas: " + venta.getCantidadEntradas() + "\n";
-            resumen += "Monto pagado: S/ " + venta.getMonto() + "\n";
+            if (descuentoPuntos > 0) {
+                resumen += "Descuento por tarjeta: " + (descuento % 1 == 0 ? (int)descuento : descuento) + "%\n";
+                resumen += "Descuento por puntos (10 pts): " + (descuentoPuntos % 1 == 0 ? (int)descuentoPuntos : descuentoPuntos) + "%\n";
+                resumen += "Descuento total aplicado: " + (descuentoTotal % 1 == 0 ? (int)descuentoTotal : descuentoTotal) + "%\n";
+            } else {
+                resumen += "Descuento aplicado: " + (descuentoTotal % 1 == 0 ? (int)descuentoTotal : descuentoTotal) + "%\n";
+            }
+            resumen += "Precio original por entrada: S/ " + originalPrecio + "\n";
+            resumen += "Precio final por entrada: S/ " + precioDescuento + "\n";
+            resumen += "Monto total sin descuento: S/ " + (originalPrecio * cantidad) + "\n";
+            resumen += "Cobro total final: S/ " + venta.getMonto() + "\n";
             resumen += "Entradas disponibles en zona: " + zona.contarDisponibles() + "\n";
 
             vistaCompra.txtResumen.setText(resumen);
@@ -304,6 +394,41 @@ public class ControladorCompra {
                 }
             }
         }
+        return null;
+    }
+
+    private javax.swing.JTextField obtenerTxtDescuentoCompra() {
+        try {
+            java.awt.Component[] components = vistaCompra.getContentPane().getComponents();
+            javax.swing.JLabel targetLabel = null;
+            for (java.awt.Component comp : components) {
+                if (comp instanceof javax.swing.JLabel) {
+                    javax.swing.JLabel lbl = (javax.swing.JLabel) comp;
+                    if (lbl.getText() != null && lbl.getText().toLowerCase().contains("descuento")) {
+                        targetLabel = lbl;
+                        break;
+                    }
+                }
+            }
+            if (targetLabel != null) {
+                javax.swing.JTextField closestText = null;
+                int minDistance = Integer.MAX_VALUE;
+                for (java.awt.Component comp : components) {
+                    if (comp instanceof javax.swing.JTextField) {
+                        int diffY = Math.abs(comp.getY() - targetLabel.getY());
+                        if (diffY < 20 && comp.getX() > targetLabel.getX()) {
+                            int dist = comp.getX() - targetLabel.getX();
+                            if (dist < minDistance) {
+                                minDistance = dist;
+                                closestText = (javax.swing.JTextField) comp;
+                            }
+                        }
+                    }
+                }
+                return closestText;
+            }
+        } catch (Exception ex) {}
+        
         return null;
     }
 }

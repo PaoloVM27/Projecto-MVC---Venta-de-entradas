@@ -26,6 +26,12 @@ public class ControladorRegistroCliente {
     }
 
     private void registrarCliente() {
+        String correo = "";
+        javax.swing.JTextField txtCorreo = obtenerTxtCorreo();
+        if (txtCorreo != null) {
+            correo = txtCorreo.getText().trim();
+        }
+        
         String nombres = vistaRegistro.txtNombres.getText().trim();
         String apellidos = vistaRegistro.txtApellidos.getText().trim();
         String dni = vistaRegistro.txtDni.getText().trim();
@@ -64,8 +70,18 @@ public class ControladorRegistroCliente {
 
         java.time.LocalDate ahora = java.time.LocalDate.now();
         int edad = java.time.Period.between(fechaNac, ahora).getYears();
-        if (edad < 18) {
-            javax.swing.JOptionPane.showMessageDialog(vistaRegistro, "Debes ser mayor de edad (18 años o más) para registrarte.");
+        
+        try {
+            if (edad < 18) {
+                throw new Exception("Debes ser mayor de edad (18 años o más) para registrarte.");
+            }
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(vistaRegistro, e.getMessage());
+            return;
+        }
+        
+        if (correo.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(vistaRegistro, "Ingresa un correo electrónico.");
             return;
         }
 
@@ -84,16 +100,58 @@ public class ControladorRegistroCliente {
             return;
         }
 
-        boolean registrado = auth.registrarCliente(nombres, apellidos, dni, contrasena);
+        java.util.Random rnd = new java.util.Random();
+        String codigoGenerado = String.format("%04d", rnd.nextInt(10000));
+        
+        try {
+            java.util.Properties props = new java.util.Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            
+            javax.mail.Session session = javax.mail.Session.getInstance(props, new javax.mail.Authenticator() {
+                protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+                    return new javax.mail.PasswordAuthentication("sistemaentradasunmsm@gmail.com", "qisbehwhtfegqeaq");
+                }
+            });
+            
+            javax.mail.Message message = new javax.mail.internet.MimeMessage(session);
+            message.setFrom(new javax.mail.internet.InternetAddress("sistemaentradasunmsm@gmail.com"));
+            message.setRecipients(javax.mail.Message.RecipientType.TO, javax.mail.internet.InternetAddress.parse(correo));
+            message.setSubject("Código de Verificación - Registro");
+            message.setText("Tu código de verificación es: " + codigoGenerado);
+            
+            javax.mail.Transport.send(message);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(vistaRegistro, "Error al enviar el correo. Revisa la configuración de red y la contraseña de aplicación.");
+            return;
+        }
+        
+        boolean verificado = false;
+        while (!verificado) {
+            String input = javax.swing.JOptionPane.showInputDialog(vistaRegistro, "Se ha enviado un código de 4 dígitos a " + correo + ".\nIngresa el código de Verificación:");
+            if (input == null) {
+                return;
+            }
+            if (input.equals(codigoGenerado)) {
+                verificado = true;
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(vistaRegistro, "Código incorrecto. Vuelve a intentarlo.");
+            }
+        }
+
+        boolean registrado = auth.registrarCliente(nombres, apellidos, dni, correo, contrasena);
 
         if (registrado) {
-            javax.swing.JOptionPane.showMessageDialog(vistaRegistro, "Cliente registrado correctamente.");
+            javax.swing.JOptionPane.showMessageDialog(vistaRegistro, "Registro realizado con éxito.");
             vistaRegistro.txtNombres.setText("");
             vistaRegistro.txtApellidos.setText("");
             vistaRegistro.txtDni.setText("");
             vistaRegistro.jTextField1.setText("");
             vistaRegistro.txtContrasena.setText("");
             vistaRegistro.txtConfirmarContrasena.setText("");
+            if (txtCorreo != null) txtCorreo.setText("");
             volverLogin();
         } else {
             javax.swing.JOptionPane.showMessageDialog(vistaRegistro, "No se pudo registrar. Puede que el DNI ya exista.");
@@ -116,5 +174,39 @@ public class ControladorRegistroCliente {
             vistaRegistro.txtContrasena.setEchoChar('*');
             vistaRegistro.txtConfirmarContrasena.setEchoChar('*');
         }
+    }
+
+    private javax.swing.JTextField obtenerTxtCorreo() {
+        try {
+            java.awt.Component[] components = vistaRegistro.getContentPane().getComponents();
+            javax.swing.JLabel targetLabel = null;
+            for (java.awt.Component comp : components) {
+                if (comp instanceof javax.swing.JLabel) {
+                    javax.swing.JLabel lbl = (javax.swing.JLabel) comp;
+                    if (lbl.getText() != null && lbl.getText().toLowerCase().contains("correo")) {
+                        targetLabel = lbl;
+                        break;
+                    }
+                }
+            }
+            if (targetLabel != null) {
+                javax.swing.JTextField closestText = null;
+                int minDistance = Integer.MAX_VALUE;
+                for (java.awt.Component comp : components) {
+                    if (comp instanceof javax.swing.JTextField && !(comp instanceof javax.swing.JPasswordField)) {
+                        int diffY = Math.abs(comp.getY() - targetLabel.getY());
+                        if (diffY < 20 && comp.getX() > targetLabel.getX()) {
+                            int dist = comp.getX() - targetLabel.getX();
+                            if (dist < minDistance) {
+                                minDistance = dist;
+                                closestText = (javax.swing.JTextField) comp;
+                            }
+                        }
+                    }
+                }
+                return closestText;
+            }
+        } catch (Exception ex) {}
+        return null;
     }
 }

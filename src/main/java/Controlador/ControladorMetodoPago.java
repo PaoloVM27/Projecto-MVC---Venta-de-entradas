@@ -243,8 +243,7 @@ public class ControladorMetodoPago {
             }
 
             if (!esValida) {
-                mostrarMensaje("Datos de tarjeta inválidos.\n\n" + recordatorio);
-                return;
+                throw new Exception("Datos de tarjeta inválidos.\n\n" + recordatorio);
             }
 
             long numero = Long.parseLong(numeroTexto);

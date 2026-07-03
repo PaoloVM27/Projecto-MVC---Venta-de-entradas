@@ -154,6 +154,21 @@ public class ControladorCrearConcierto {
             format.setLenient(false);
             Date fecha = format.parse(fechaTexto);
 
+            double dVisa = 0, dMaster = 0, dAmex = 0, dDiners = 0;
+            try {
+                javax.swing.JTextField txtVisa = obtenerTxtDescuentoVisa();
+                if (txtVisa != null && !txtVisa.getText().trim().isEmpty()) dVisa = Double.parseDouble(txtVisa.getText().trim());
+                javax.swing.JTextField txtMaster = obtenerTxtDescuentoMasterCard();
+                if (txtMaster != null && !txtMaster.getText().trim().isEmpty()) dMaster = Double.parseDouble(txtMaster.getText().trim());
+                javax.swing.JTextField txtAmex = obtenerTxtDescuentoAmericanExpress();
+                if (txtAmex != null && !txtAmex.getText().trim().isEmpty()) dAmex = Double.parseDouble(txtAmex.getText().trim());
+                javax.swing.JTextField txtDiners = obtenerTxtDescuentoDinersClub();
+                if (txtDiners != null && !txtDiners.getText().trim().isEmpty()) dDiners = Double.parseDouble(txtDiners.getText().trim());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(vista, "Los descuentos deben ser numericos.");
+                return;
+            }
+
             boolean creado = arregloConcierto.crearConcierto(nombre, fecha);
 
             if (creado) {
@@ -166,9 +181,25 @@ public class ControladorCrearConcierto {
                         }
                     }
                 }
+                
+                Modelo.Concierto c = arregloConcierto.buscarConcierto(nombre);
+                if (c != null) {
+                    c.setDescuentoVisa(dVisa);
+                    c.setDescuentoMasterCard(dMaster);
+                    c.setDescuentoAmericanExpress(dAmex);
+                    c.setDescuentoDinersClub(dDiners);
+                    arregloConcierto.guardarConciertos();
+                }
+
                 JOptionPane.showMessageDialog(vista, "Concierto creado con éxito.");
                 vista.txtNombreConcierto.setText("");
                 vista.txtFechaConcierto.setText("");
+                try {
+                    if (obtenerTxtDescuentoVisa() != null) obtenerTxtDescuentoVisa().setText("");
+                    if (obtenerTxtDescuentoMasterCard() != null) obtenerTxtDescuentoMasterCard().setText("");
+                    if (obtenerTxtDescuentoAmericanExpress() != null) obtenerTxtDescuentoAmericanExpress().setText("");
+                    if (obtenerTxtDescuentoDinersClub() != null) obtenerTxtDescuentoDinersClub().setText("");
+                } catch (Exception ex) {}
                 arregloZonas.limpiar();
                 cargarTablaZonas();
             } else {
@@ -252,5 +283,37 @@ public class ControladorCrearConcierto {
             }
             return null;
         }
+    }
+
+    private javax.swing.JTextField obtenerTxtDescuentoVisa() {
+        try {
+            java.lang.reflect.Field field = vista.getClass().getDeclaredField("jTextField4");
+            field.setAccessible(true);
+            return (javax.swing.JTextField) field.get(vista);
+        } catch (Exception ex) { return null; }
+    }
+
+    private javax.swing.JTextField obtenerTxtDescuentoMasterCard() {
+        try {
+            java.lang.reflect.Field field = vista.getClass().getDeclaredField("jTextField5");
+            field.setAccessible(true);
+            return (javax.swing.JTextField) field.get(vista);
+        } catch (Exception ex) { return null; }
+    }
+
+    private javax.swing.JTextField obtenerTxtDescuentoAmericanExpress() {
+        try {
+            java.lang.reflect.Field field = vista.getClass().getDeclaredField("jTextField6");
+            field.setAccessible(true);
+            return (javax.swing.JTextField) field.get(vista);
+        } catch (Exception ex) { return null; }
+    }
+
+    private javax.swing.JTextField obtenerTxtDescuentoDinersClub() {
+        try {
+            java.lang.reflect.Field field = vista.getClass().getDeclaredField("jTextField7");
+            field.setAccessible(true);
+            return (javax.swing.JTextField) field.get(vista);
+        } catch (Exception ex) { return null; }
     }
 }
