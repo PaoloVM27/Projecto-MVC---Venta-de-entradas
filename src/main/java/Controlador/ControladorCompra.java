@@ -32,9 +32,17 @@ public class ControladorCompra {
         this.vistaCompra.btnVolver.addActionListener(e -> volverMenu());
         this.vistaCompra.cboZona.addActionListener(e -> calcularMonto());
         this.vistaCompra.spnCantidad.addChangeListener(e -> calcularMonto());
+        this.vistaCompra.jCheckBox1.addActionListener(e -> calcularMonto());
     }
 
     public void iniciar() {
+        Cliente clienteActual = auth.getClienteActual();
+        if (clienteActual != null) {
+            vistaCompra.jLabel8.setBounds(80, 240, 135, 20);
+            vistaCompra.jLabel8.setText("Puntos actuales: " + clienteActual.getPuntos());
+            vistaCompra.jCheckBox1.setEnabled(clienteActual.aplicaDescuentoPorPuntos());
+        }
+
         Concierto[] listaConciertos = arregloConcierto.listarConciertos();
         
         vistaCompra.cboConcierto.removeAllItems();
@@ -196,8 +204,8 @@ public class ControladorCompra {
         
         double descuentoPuntos = 0.0;
         Cliente cliente = auth.getClienteActual();
-        if (cliente != null && cliente.getPuntos() >= 10) {
-            descuentoPuntos = 5.0;
+        if (cliente != null && vistaCompra.jCheckBox1.isSelected()) {
+            descuentoPuntos = cliente.obtenerValorDescuentoPorPuntos();
         }
         
         double descuentoTotal = descuento + descuentoPuntos;
@@ -291,8 +299,8 @@ public class ControladorCompra {
             } catch (Exception e) {}
             
             double descuentoPuntos = 0.0;
-            if (cliente != null && cliente.getPuntos() >= 10) {
-                descuentoPuntos = 5.0;
+            if (cliente != null && vistaCompra.jCheckBox1.isSelected()) {
+                descuentoPuntos = cliente.obtenerValorDescuentoPorPuntos();
             }
             
             double descuentoTotal = descuento + descuentoPuntos;
@@ -310,7 +318,11 @@ public class ControladorCompra {
                     cliente,
                     concierto,
                     zona,
-                    cantidad
+                    cantidad,
+                    descuentoPuntos > 0,
+                    descuento,
+                    descuentoPuntos,
+                    originalPrecio * cantidad
             );
             
             try {
@@ -322,13 +334,17 @@ public class ControladorCompra {
             arregloConcierto.guardarConciertos();
             
             if (descuentoPuntos > 0) {
-                cliente.setPuntos(cliente.getPuntos() - 10);
+                cliente.usarPuntos();
+                vistaCompra.jCheckBox1.setSelected(false);
                 try {
                     java.lang.reflect.Method mGuardar = arregloCliente.getClass().getDeclaredMethod("guardarCambios");
                     mGuardar.setAccessible(true);
                     mGuardar.invoke(arregloCliente);
                 } catch (Exception ex) {}
             }
+
+            vistaCompra.jLabel8.setText("Puntos actuales: " + cliente.getPuntos());
+            vistaCompra.jCheckBox1.setEnabled(cliente.aplicaDescuentoPorPuntos());
 
             Tarjeta tarjeta = cliente.getTarjeta();
 

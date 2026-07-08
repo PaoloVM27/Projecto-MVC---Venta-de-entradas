@@ -46,21 +46,13 @@ public class ArregloVentas {
         ventas = nuevoArreglo;
     }
 
-    public Venta comprarEntradas(Cliente cliente, Concierto concierto, Zona zona, int cantidad) {
-        if (cliente == null) {
-            throw new IllegalArgumentException("El cliente no puede ser nulo.");
+    public Venta comprarEntradas(Cliente cliente, Concierto concierto, Zona zona, int cantidad, boolean usaPuntos, double descuentoTarjeta, double descuentoPuntos, double montoSinDescuento) {
+        if (cliente == null || concierto == null || zona == null || cantidad <= 0) {
+            return null;
         }
 
         if (concierto == null) {
             throw new IllegalArgumentException("El concierto no puede ser nulo.");
-        }
-
-        if (zona == null) {
-            throw new IllegalArgumentException("La zona no puede ser nula.");
-        }
-
-        if (cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor que cero.");
         }
 
         if (cantidad > 4) {
@@ -80,7 +72,13 @@ public class ArregloVentas {
         venta.setDniCliente(cliente.getDni());
         venta.setNombreConcierto(concierto.getNombre());
         venta.setNombreZona(zona.getNombre());
+        venta.setTarjeta(cliente.getTarjeta());
+        venta.setUsaPuntos(usaPuntos);
+        venta.setDescuentoTarjeta(descuentoTarjeta);
+        venta.setDescuentoPuntos(descuentoPuntos);
+        venta.setMontoSinDescuento(montoSinDescuento);
 
+        boolean ventaConcierto = concierto.agregarVenta(venta);
         for (int i = 0; i < entradasVendidas.length; i++) {
             if (entradasVendidas[i] != null) {
                 venta.agregarEntrada(entradasVendidas[i], zona.getPrecio());
@@ -102,7 +100,9 @@ public class ArregloVentas {
         ventas[numVentas] = venta;
         numVentas++;
 
-        cliente.setPuntos(cliente.getPuntos() + venta.getCantidadEntradas());
+        if (!usaPuntos) {
+            cliente.setPuntos(cliente.getPuntos() + venta.getCantidadEntradas());
+        }
 
         guardarCambios();
 
@@ -131,7 +131,7 @@ public class ArregloVentas {
 
         if (anulada) {
             for (int i = 0; i < numVentas; i++) {
-                if (ventas[i] == venta) {
+                if (ventas[i] != null && ventas[i].getDniCliente().equals(venta.getDniCliente()) && ventas[i].getFecha().getTime() == venta.getFecha().getTime()) {
                     for (int j = i; j < numVentas - 1; j++) {
                         ventas[j] = ventas[j + 1];
                     }
@@ -147,6 +147,30 @@ public class ArregloVentas {
         }
 
         return anulada;
+    }
+
+    public boolean devolverEntradas(Concierto concierto, Cliente cliente, Venta venta, int cantidadADevolver) {
+        if (concierto == null || cliente == null || venta == null) {
+            return false;
+        }
+
+        if (cantidadADevolver <= 0 || cantidadADevolver > venta.getCantidadEntradas()) {
+            return false;
+        }
+
+        if (cantidadADevolver == venta.getCantidadEntradas()) {
+            return anularVenta(concierto, cliente, venta);
+        }
+
+        boolean devuelto = venta.devolver(cantidadADevolver);
+        if (devuelto) {
+            int nuevosPuntos = cliente.getPuntos() - cantidadADevolver;
+            cliente.setPuntos(nuevosPuntos < 0 ? 0 : nuevosPuntos);
+            guardarCambios();
+            return true;
+        }
+
+        return false;
     }
 
     public boolean cargarVentas(Concierto[] conciertos, int numConciertos) {

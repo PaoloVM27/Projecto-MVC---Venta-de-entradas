@@ -14,12 +14,12 @@ public class ArregloTarjetas {
         this.numClientes = numClientes;
     }
 
-    public boolean registrarTarjeta(long numero, String nombre, String fecha, int cvv, double saldo) {
+    public boolean registrarTarjeta(long numero, String nombre, String fecha, double saldo) {
         if (clienteActual == null) {
             return false;
         }
 
-        Tarjeta tarjeta = new Tarjeta(numero, nombre, fecha, cvv, saldo);
+        Tarjeta tarjeta = new Tarjeta(numero, nombre, fecha, saldo);
         boolean registrada = clienteActual.agregarTarjeta(tarjeta);
 
         if (registrada) {
@@ -29,12 +29,12 @@ public class ArregloTarjetas {
         return registrada;
     }
 
-    public boolean actualizarTarjeta(int indice, long numero, String nombre, String fecha, int cvv, double saldo) {
+    public boolean actualizarTarjeta(int indice, long numero, String nombre, String fecha, double saldo) {
         if (clienteActual == null) {
             return false;
         }
 
-        Tarjeta tarjeta = new Tarjeta(numero, nombre, fecha, cvv, saldo);
+        Tarjeta tarjeta = new Tarjeta(numero, nombre, fecha, saldo);
         boolean actualizada = clienteActual.actualizarTarjeta(indice, tarjeta);
 
         if (actualizada) {

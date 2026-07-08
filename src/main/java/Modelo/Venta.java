@@ -15,6 +15,11 @@ public class Venta implements java.io.Serializable {
     private String nombreConcierto;
     private String nombreZona;
 
+    private double montoSinDescuento;
+    private double descuentoTarjeta;
+    private double descuentoPuntos;
+    private boolean usaPuntos;
+
     public Venta() {
         this.fecha = new Date();
         this.monto = 0.0;
@@ -24,6 +29,10 @@ public class Venta implements java.io.Serializable {
         this.dniCliente = "";
         this.nombreConcierto = "";
         this.nombreZona = "";
+        this.montoSinDescuento = 0.0;
+        this.descuentoTarjeta = 0.0;
+        this.descuentoPuntos = 0.0;
+        this.usaPuntos = false;
     }
 
     public boolean anular() {
@@ -130,5 +139,56 @@ public class Venta implements java.io.Serializable {
 
     public void setNombreZona(String nombreZona) {
         this.nombreZona = nombreZona;
+    }
+
+    public double getMontoSinDescuento() {
+        return montoSinDescuento;
+    }
+
+    public void setMontoSinDescuento(double montoSinDescuento) {
+        this.montoSinDescuento = montoSinDescuento;
+    }
+
+    public double getDescuentoTarjeta() {
+        return descuentoTarjeta;
+    }
+
+    public void setDescuentoTarjeta(double descuentoTarjeta) {
+        this.descuentoTarjeta = descuentoTarjeta;
+    }
+
+    public double getDescuentoPuntos() {
+        return descuentoPuntos;
+    }
+
+    public void setDescuentoPuntos(double descuentoPuntos) {
+        this.descuentoPuntos = descuentoPuntos;
+    }
+
+    public boolean isUsaPuntos() {
+        return usaPuntos;
+    }
+
+    public void setUsaPuntos(boolean usaPuntos) {
+        this.usaPuntos = usaPuntos;
+    }
+
+    public boolean devolver(int cantidad) {
+        if (cantidad <= 0 || cantidad >= numEntradas) {
+            return false;
+        }
+
+        double precioUnitario = monto / numEntradas;
+
+        for (int i = 0; i < cantidad; i++) {
+            if (numEntradas > 0) {
+                entradas[numEntradas - 1].liberar();
+                entradas[numEntradas - 1] = null;
+                numEntradas--;
+                monto -= precioUnitario;
+            }
+        }
+
+        return true;
     }
 }

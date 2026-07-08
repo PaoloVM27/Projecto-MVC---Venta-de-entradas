@@ -41,12 +41,12 @@ public class ArregloCliente {
         return true;
     }
 
-    public boolean registrarTarjeta(long numero, String nombre, String fecha, int cvv, double saldo) {
+    public boolean registrarTarjeta(long numero, String nombre, String fecha, double saldo) {
         if (clienteActual == null) {
             return false;
         }
 
-        Tarjeta tarjeta = new Tarjeta(numero, nombre, fecha, cvv, saldo);
+        Tarjeta tarjeta = new Tarjeta(numero, nombre, fecha, saldo);
 
         boolean registrada = clienteActual.registrarTarjeta(tarjeta);
 

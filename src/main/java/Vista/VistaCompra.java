@@ -53,6 +53,8 @@ public class VistaCompra extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -73,7 +75,7 @@ public class VistaCompra extends javax.swing.JFrame {
         getContentPane().add(spnCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, -1, -1));
 
         lblMonto.setText("MONTO:         S/ 0.0");
-        getContentPane().add(lblMonto, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 220, 109, -1));
+        getContentPane().add(lblMonto, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 210, 109, -1));
 
         jLabel1.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
         jLabel1.setText("Seleccionar Tarjeta:");
@@ -88,7 +90,7 @@ public class VistaCompra extends javax.swing.JFrame {
         btnComprar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/compra.png"))); // NOI18N
         btnComprar.setText("Comprar");
         btnComprar.addActionListener(this::btnComprarActionPerformed);
-        getContentPane().add(btnComprar, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 250, 140, 40));
+        getContentPane().add(btnComprar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 280, 140, 40));
 
         btnVolver.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/volver.png"))); // NOI18N
         btnVolver.setText("Volver");
@@ -96,13 +98,13 @@ public class VistaCompra extends javax.swing.JFrame {
         getContentPane().add(btnVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 350, 100, 40));
 
         jLabel7.setText("Resumen:");
-        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 330, 59, -1));
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 340, 59, -1));
 
         txtResumen.setColumns(20);
         txtResumen.setRows(5);
         jScrollPane1.setViewportView(txtResumen);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 330, 270, 130));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 340, 270, 130));
         getContentPane().add(txtNumeroTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 190, 150, -1));
         getContentPane().add(txtNombreTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 230, 150, -1));
 
@@ -134,6 +136,13 @@ public class VistaCompra extends javax.swing.JFrame {
         jLabel5.setText("%");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 270, 20, 20));
 
+        jCheckBox1.setText("Usar puntos");
+        jCheckBox1.addActionListener(this::jCheckBox1ActionPerformed);
+        getContentPane().add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 240, -1, -1));
+
+        jLabel8.setText("Puntos actuales:      0");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 240, 170, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -148,6 +157,10 @@ public class VistaCompra extends javax.swing.JFrame {
     private void cboConciertoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboConciertoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cboConciertoActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -179,6 +192,7 @@ public class VistaCompra extends javax.swing.JFrame {
     public javax.swing.JButton btnVolver;
     public javax.swing.JComboBox<String> cboConcierto;
     public javax.swing.JComboBox<String> cboZona;
+    public javax.swing.JCheckBox jCheckBox1;
     public javax.swing.JComboBox<String> jComboBox1;
     public javax.swing.JLabel jLabel1;
     public javax.swing.JLabel jLabel2;
@@ -187,6 +201,7 @@ public class VistaCompra extends javax.swing.JFrame {
     public javax.swing.JLabel jLabel5;
     public javax.swing.JLabel jLabel6;
     public javax.swing.JLabel jLabel7;
+    public javax.swing.JLabel jLabel8;
     public javax.swing.JPanel jPanel1;
     public javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JTextField jTextField1;

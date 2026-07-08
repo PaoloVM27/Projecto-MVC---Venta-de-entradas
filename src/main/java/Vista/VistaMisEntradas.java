@@ -34,6 +34,7 @@ public class VistaMisEntradas extends javax.swing.JFrame {
         lblCantidadCompras = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -53,7 +54,7 @@ public class VistaMisEntradas extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblEntradas);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 140, 500, 203));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 650, 203));
 
         lblTotalGastado.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         lblTotalGastado.setText("Total gastado: S/ 0.00");
@@ -61,7 +62,7 @@ public class VistaMisEntradas extends javax.swing.JFrame {
 
         btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Actualizar.png"))); // NOI18N
         btnActualizar.setText("Actualizar");
-        getContentPane().add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 100, 110, 30));
+        getContentPane().add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 90, 110, 30));
 
         btnVolver.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/volver.png"))); // NOI18N
         btnVolver.setText("Volver");
@@ -97,8 +98,21 @@ public class VistaMisEntradas extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 80));
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/SolicitarDevolucion.png"))); // NOI18N
+        jButton1.setText("Solicitar Devolución");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 360, 130, 30));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -138,6 +152,7 @@ public class VistaMisEntradas extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnActualizar;
     public javax.swing.JButton btnVolver;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

@@ -30,54 +30,48 @@ public class VistaMetodoPago extends javax.swing.JFrame {
         txtNumeroTarjeta = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         txtNombreTarjeta = new javax.swing.JTextField();
         txtFechaTarjeta = new javax.swing.JTextField();
-        txtCvv = new javax.swing.JTextField();
         btnGuardarTarjeta = new javax.swing.JButton();
         btnEliminarTarjeta = new javax.swing.JButton();
         btnVolver = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        lblIconoTarjeta = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setText("Número de tarjeta: ");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 140, 130, 20));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 150, 130, 20));
 
         txtNumeroTarjeta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNumeroTarjetaActionPerformed(evt);
             }
         });
-        getContentPane().add(txtNumeroTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 140, 160, 20));
+        getContentPane().add(txtNumeroTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 150, 160, 20));
 
         jLabel3.setText("Nombre del titular:");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 180, 140, 20));
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 100, 140, 20));
 
         jLabel4.setText("Fecha vencimiento:");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 110, -1, 20));
-
-        jLabel5.setText(" CVV / CID:");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 150, 60, 20));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 150, -1, 20));
 
         txtNombreTarjeta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNombreTarjetaActionPerformed(evt);
             }
         });
-        getContentPane().add(txtNombreTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, 160, 20));
-        getContentPane().add(txtFechaTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 110, 120, 20));
-        getContentPane().add(txtCvv, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 150, 120, -1));
+        getContentPane().add(txtNombreTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 100, 120, 20));
+        getContentPane().add(txtFechaTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 150, 120, 20));
 
         btnGuardarTarjeta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/guardarTarjeta.png"))); // NOI18N
         btnGuardarTarjeta.setText("Guardar / Actualizar Tarjeta");
-        getContentPane().add(btnGuardarTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 190, 200, 30));
+        getContentPane().add(btnGuardarTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 200, 200, 30));
 
         btnEliminarTarjeta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/EliminarTarjeta.png"))); // NOI18N
         btnEliminarTarjeta.setText("Eliminar Tarjeta");
@@ -118,14 +112,6 @@ public class VistaMetodoPago extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 70));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Visa", "MasterCard", "American Express", "Diners Club" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 100, -1, -1));
-
         jLabel6.setText("Tipo de tarjeta:");
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 100, 120, -1));
 
@@ -143,6 +129,7 @@ public class VistaMetodoPago extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, -1, 140));
+        getContentPane().add(lblIconoTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 90, 90, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -158,10 +145,6 @@ public class VistaMetodoPago extends javax.swing.JFrame {
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnVolverActionPerformed
-
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -202,17 +185,15 @@ public class VistaMetodoPago extends javax.swing.JFrame {
     public javax.swing.JButton btnEliminarTarjeta;
     public javax.swing.JButton btnGuardarTarjeta;
     public javax.swing.JButton btnVolver;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    public javax.swing.JTextField txtCvv;
+    private javax.swing.JLabel lblIconoTarjeta;
     public javax.swing.JTextField txtFechaTarjeta;
     public javax.swing.JTextField txtNombreTarjeta;
     public javax.swing.JTextField txtNumeroTarjeta;

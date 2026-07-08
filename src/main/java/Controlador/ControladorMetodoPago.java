@@ -29,6 +29,12 @@ public class ControladorMetodoPago {
         this.vistaMetodoPago.btnGuardarTarjeta.addActionListener(e -> guardarTarjeta());
         this.vistaMetodoPago.btnEliminarTarjeta.addActionListener(e -> eliminarTarjeta());
         this.vistaMetodoPago.btnVolver.addActionListener(e -> volverMenu());
+        
+        this.vistaMetodoPago.txtNumeroTarjeta.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { actualizarIconoTarjeta(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { actualizarIconoTarjeta(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { actualizarIconoTarjeta(); }
+        });
     }
 
     public void iniciar() {
@@ -88,28 +94,9 @@ public class ControladorMetodoPago {
                 vistaMetodoPago.txtNumeroTarjeta.setText(String.valueOf(t.getNumero()));
                 vistaMetodoPago.txtNombreTarjeta.setText(t.getNombre());
                 vistaMetodoPago.txtFechaTarjeta.setText(t.getFecha());
-                vistaMetodoPago.txtCvv.setText(String.valueOf(t.getCvv()));
 
                 String numStr = String.valueOf(t.getNumero());
-                javax.swing.JComboBox<String> combo = obtenerComboBox();
-                if (combo != null) {
-                    for (int i = 0; i < combo.getItemCount(); i++) {
-                        String item = combo.getItemAt(i);
-                        if (item.equalsIgnoreCase("Visa") && numStr.startsWith("4")) {
-                            combo.setSelectedIndex(i);
-                            break;
-                        } else if (item.equalsIgnoreCase("Mastercard") && (numStr.startsWith("5") || numStr.startsWith("2"))) {
-                            combo.setSelectedIndex(i);
-                            break;
-                        } else if (item.equalsIgnoreCase("American Express") && numStr.startsWith("3") && numStr.length() == 15) {
-                            combo.setSelectedIndex(i);
-                            break;
-                        } else if (item.equalsIgnoreCase("Diners Club") && numStr.startsWith("3") && numStr.length() == 14) {
-                            combo.setSelectedIndex(i);
-                            break;
-                        }
-                    }
-                }
+                actualizarIconoTarjeta();
             }
         }
     }
@@ -182,10 +169,8 @@ public class ControladorMetodoPago {
             String numeroTexto = vistaMetodoPago.txtNumeroTarjeta.getText().trim();
             String nombre = vistaMetodoPago.txtNombreTarjeta.getText().trim();
             String fecha = vistaMetodoPago.txtFechaTarjeta.getText().trim();
-            String cvvTexto = vistaMetodoPago.txtCvv.getText().trim();
 
-            if (numeroTexto.isEmpty() || nombre.isEmpty() || fecha.isEmpty()
-                    || cvvTexto.isEmpty()) {
+            if (numeroTexto.isEmpty() || nombre.isEmpty() || fecha.isEmpty()) {
                 mostrarMensaje("Completa todos los datos de la tarjeta.");
                 return;
             }
@@ -194,60 +179,54 @@ public class ControladorMetodoPago {
                 mostrarMensaje("El número de tarjeta debe contener solo dígitos.");
                 return;
             }
-            if (!cvvTexto.matches("\\d+")) {
-                mostrarMensaje("El CVV/CID debe contener solo dígitos.");
-                return;
+
+            String tipo = "";
+            if (numeroTexto.startsWith("4")) {
+                tipo = "Visa";
+            } else if (numeroTexto.startsWith("5") || numeroTexto.startsWith("2")) {
+                tipo = "Mastercard";
+            } else if (numeroTexto.startsWith("3")) {
+                if (numeroTexto.length() == 15) tipo = "American Express";
+                else if (numeroTexto.length() == 14) tipo = "Diners Club";
+                else tipo = "American Express / Diners Club";
             }
 
-            javax.swing.JComboBox<String> combo = obtenerComboBox();
-            String tipo = (combo != null && combo.getSelectedItem() != null) ? combo.getSelectedItem().toString() : "";
             boolean esValida = false;
             String recordatorio = "";
 
             if (tipo.equalsIgnoreCase("Visa")) {
-                if (numeroTexto.startsWith("4") && numeroTexto.length() == 16 && cvvTexto.length() == 3) {
+                if (numeroTexto.length() == 16) {
                     esValida = true;
                 } else {
-                    recordatorio = "Recordatorio de especificaciones para Visa:\n"
-                            + "- El número debe comenzar con 4.\n"
-                            + "- Debe tener exactamente 16 dígitos.\n"
-                            + "- El código de seguridad (CVV) debe tener exactamente 3 dígitos.";
+                    recordatorio = "Recordatorio para Visa:\n- Debe tener exactamente 16 dígitos.";
                 }
             } else if (tipo.equalsIgnoreCase("Mastercard")) {
-                if ((numeroTexto.startsWith("5") || numeroTexto.startsWith("2")) && numeroTexto.length() == 16 && cvvTexto.length() == 3) {
+                if (numeroTexto.length() == 16) {
                     esValida = true;
                 } else {
-                    recordatorio = "Recordatorio de especificaciones para Mastercard:\n"
-                            + "- El número debe comenzar con 5 o 2.\n"
-                            + "- Debe tener exactamente 16 dígitos.\n"
-                            + "- El código de seguridad (CVV) debe tener exactamente 3 dígitos.";
+                    recordatorio = "Recordatorio para Mastercard:\n- Debe tener exactamente 16 dígitos.";
                 }
             } else if (tipo.equalsIgnoreCase("American Express")) {
-                if (numeroTexto.startsWith("3") && numeroTexto.length() == 15 && cvvTexto.length() == 4) {
+                if (numeroTexto.length() == 15) {
                     esValida = true;
                 } else {
-                    recordatorio = "Recordatorio de especificaciones para American Express:\n"
-                            + "- El número debe comenzar con 3.\n"
-                            + "- Debe tener exactamente 15 dígitos.\n"
-                            + "- El código de seguridad (CID) debe tener exactamente 4 dígitos.";
+                    recordatorio = "Recordatorio para American Express:\n- Debe tener exactamente 15 dígitos.";
                 }
             } else if (tipo.equalsIgnoreCase("Diners Club")) {
-                if (numeroTexto.startsWith("3") && numeroTexto.length() == 14 && cvvTexto.length() == 3) {
+                if (numeroTexto.length() == 14) {
                     esValida = true;
                 } else {
-                    recordatorio = "Recordatorio de especificaciones para Diners Club:\n"
-                            + "- El número debe comenzar con 3.\n"
-                            + "- Debe tener exactamente 14 dígitos.\n"
-                            + "- El código de seguridad (CVV) debe tener exactamente 3 dígitos.";
+                    recordatorio = "Recordatorio para Diners Club:\n- Debe tener exactamente 14 dígitos.";
                 }
+            } else {
+                recordatorio = "El número ingresado no coincide con ningún tipo de tarjeta soportado (Visa, Mastercard, Amex, Diners).";
             }
 
             if (!esValida) {
-                throw new Exception("Datos de tarjeta inválidos.\n\n" + recordatorio);
+                throw new Exception("Número de tarjeta inválido.\n\n" + recordatorio);
             }
 
             long numero = Long.parseLong(numeroTexto);
-            int cvv = Integer.parseInt(cvvTexto);
             double saldo = 0.0;
 
             boolean operacionExitosa;
@@ -259,7 +238,6 @@ public class ControladorMetodoPago {
                         numero,
                         nombre,
                         fecha,
-                        cvv,
                         saldo
                 );
                 mensajeExito = "Tarjeta actualizada correctamente.";
@@ -268,7 +246,6 @@ public class ControladorMetodoPago {
                         numero,
                         nombre,
                         fecha,
-                        cvv,
                         saldo
                 );
                 mensajeExito = "Tarjeta guardada correctamente.";
@@ -289,7 +266,7 @@ public class ControladorMetodoPago {
             cargarTabla();
 
         } catch (NumberFormatException e) {
-            mostrarMensaje("Número de tarjeta y CVV deben ser valores numéricos.");
+            mostrarMensaje("Número de tarjeta debe ser un valor numérico.");
         } catch (Exception e) {
             mostrarMensaje(e.getMessage());
         }
@@ -344,7 +321,6 @@ public class ControladorMetodoPago {
         vistaMetodoPago.txtNumeroTarjeta.setText("");
         vistaMetodoPago.txtNombreTarjeta.setText("");
         vistaMetodoPago.txtFechaTarjeta.setText("");
-        vistaMetodoPago.txtCvv.setText("");
     }
 
     private void volverMenu() {
@@ -378,19 +354,64 @@ public class ControladorMetodoPago {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    private javax.swing.JComboBox<String> obtenerComboBox() {
+    private javax.swing.JLabel obtenerLabelIcono() {
         try {
-            java.lang.reflect.Field field = vistaMetodoPago.getClass().getDeclaredField("jComboBox1");
+            java.lang.reflect.Field field = vistaMetodoPago.getClass().getDeclaredField("lblIconoTarjeta");
             field.setAccessible(true);
-            return (javax.swing.JComboBox<String>) field.get(vistaMetodoPago);
+            return (javax.swing.JLabel) field.get(vistaMetodoPago);
         } catch (Exception ex) {
-            for (java.awt.Component comp : vistaMetodoPago.getContentPane().getComponents()) {
-                if (comp instanceof javax.swing.JComboBox) {
-                    return (javax.swing.JComboBox<String>) comp;
-                }
+            return null;
+        }
+    }
+
+    private void actualizarIconoTarjeta() {
+        javax.swing.JLabel lblIcono = obtenerLabelIcono();
+        if (lblIcono == null) return;
+        
+        String numero = vistaMetodoPago.txtNumeroTarjeta.getText().trim();
+        String rutaBase = "/imagenes/";
+        String archivoImg = "";
+        
+        if (numero.startsWith("4")) {
+            archivoImg = "visa.png";
+        } else if (numero.startsWith("5") || numero.startsWith("2")) {
+            archivoImg = "mastercard.png";
+        } else if (numero.startsWith("3")) {
+            if (numero.startsWith("34") || numero.startsWith("37")) {
+                archivoImg = "amex.png";
+            } else {
+                archivoImg = "diners.png";
             }
         }
-        return null;
+        
+        if (!archivoImg.isEmpty()) {
+            java.net.URL imgUrl = getClass().getResource("/iconos/" + archivoImg);
+            
+            if (imgUrl == null) {
+                imgUrl = getClass().getResource("/" + archivoImg);
+            }
+            
+            if (imgUrl != null) {
+                javax.swing.ImageIcon iconoOriginal = new javax.swing.ImageIcon(imgUrl);
+                java.awt.Image imagenOriginal = iconoOriginal.getImage();
+                
+                int ancho = lblIcono.getWidth();
+                int alto = lblIcono.getHeight();
+                
+                if (ancho <= 0) ancho = 60;
+                if (alto <= 0) alto = 40;
+                
+                java.awt.Image imagenEscalada = imagenOriginal.getScaledInstance(ancho, alto, java.awt.Image.SCALE_SMOOTH);
+                
+                lblIcono.setIcon(new javax.swing.ImageIcon(imagenEscalada));
+                lblIcono.setText("");
+            } else {
+                lblIcono.setIcon(null);
+                lblIcono.setText(archivoImg.replace(".png", "").toUpperCase());
+            }
+        } else {
+            lblIcono.setIcon(null);
+            lblIcono.setText("?");
+        }
     }
 }

@@ -165,4 +165,23 @@ public class Cliente extends Persona implements java.io.Serializable {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
+
+    public boolean aplicaDescuentoPorPuntos() {
+        return this.puntos >= 10;
+    }
+
+    public double obtenerValorDescuentoPorPuntos() {
+        if (aplicaDescuentoPorPuntos()) {
+            return 5.0;
+        }
+        return 0.0;
+    }
+
+    public boolean usarPuntos() {
+        if (aplicaDescuentoPorPuntos()) {
+            this.puntos -= 10;
+            return true;
+        }
+        return false;
+    }
 }

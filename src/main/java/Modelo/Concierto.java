@@ -160,7 +160,7 @@ public class Concierto implements java.io.Serializable {
         }
         
         for (int i = 0; i < numVentas; i++) {
-            if (ventas[i] == venta) {
+            if (ventas[i] != null && ventas[i].getDniCliente().equals(venta.getDniCliente()) && ventas[i].getFecha().getTime() == venta.getFecha().getTime()) {
                 boolean anulada = ventas[i].anular();
                 if (anulada) {
                     for (int j = i; j < numVentas - 1; j++) {
